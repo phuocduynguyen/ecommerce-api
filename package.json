@@ -46,6 +46,8 @@
     "config": "^4.1.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "express-async-handler": "^1.2.0",
+    "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongodb": "^6.18.0",
