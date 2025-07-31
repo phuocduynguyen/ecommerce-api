@@ -1,23 +1,23 @@
-import js from '@eslint/js';
-import eslintPluginPrettier from 'eslint-plugin-prettier';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
-import { defineConfig } from 'eslint/config';
+import js from '@eslint/js'
+import eslintPluginPrettier from 'eslint-plugin-prettier'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
+import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     plugins: { js },
-    extends: ['js/recommended'],
+    extends: ['js/recommended']
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
-    languageOptions: { globals: globals.node },
+    languageOptions: { globals: globals.node }
   },
   tseslint.configs.recommended,
   {
     plugins: {
-      prettier: eslintPluginPrettier,
+      prettier: eslintPluginPrettier
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -33,10 +33,10 @@ export default defineConfig([
           useTabs: false,
           singleQuote: true,
           printWidth: 120,
-          jsxSingleQuote: true,
-        },
-      ],
+          jsxSingleQuote: true
+        }
+      ]
     },
-    ignores: ['**/node_modules/', '**/dist/'],
-  },
-]);
+    ignores: ['**/node_modules/', '**/dist/']
+  }
+])
