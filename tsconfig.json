@@ -11,7 +11,10 @@
     "paths": {
       "~/*": ["src/*"]
     }
+    // "sourceMap": true
   },
   "files": ["src/type.d.ts"],
-  "include": ["src/**/*", "index.ts"]
+  "include": ["src/**/*"]
+  //"include": ["src/**/*", "src/index.ts"]
+  //"include": ["src/**/*", "index.ts"]
 }
