@@ -102,6 +102,46 @@ class ProductController {
       return next(createHttpError(500, 'Internal Server Error'))
     }
   }
+
+  async findAllProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } } = req.query
+      const products = await ProductFactory.findAllProducts({
+        limit: Number(limit),
+        sort: String(sort),
+        page: Number(page),
+        filter
+      })
+      res.status(200).json({
+        message: 'Products fetched successfully',
+        data: products
+      })
+    } catch (error) {
+      if (error instanceof createHttpError.HttpError) {
+        return next(error)
+      }
+      return next(createHttpError(500, 'Internal Server Error'))
+    }
+  }
+
+  async findProductById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { product_id } = req.params
+      const product = await ProductFactory.findProductById({ product_id })
+      if (!product) {
+        return next(createHttpError(404, 'Product not found'))
+      }
+      res.status(200).json({
+        message: 'Product fetched successfully',
+        data: product
+      })
+    } catch (error) {
+      if (error instanceof createHttpError.HttpError) {
+        return next(error)
+      }
+      return next(createHttpError(500, 'Internal Server Error'))
+    }
+  }
 }
 
 const productController = new ProductController()

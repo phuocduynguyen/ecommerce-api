@@ -1,3 +1,4 @@
+import { getSelectData, getUnSelectData } from '~/utils'
 import { productModel } from '../product.model'
 
 const queryProducts = async (query: any, limit: number, skip: number) => {
@@ -65,4 +66,40 @@ const searchProductsByUser = async ({ searchTerm }: { searchTerm: string }) => {
   return results
 }
 
-export { findAllDraftsForShop, publishedProductByShop, findAllPublishedProductsByShop, searchProductsByUser }
+const findAllProducts = async ({
+  limit,
+  sort,
+  page,
+  filter,
+  select
+}: {
+  limit: number
+  sort: string
+  page: number
+  filter?: any
+  select: string[]
+}) => {
+  const skip = (page - 1) * limit
+  const query = { ...filter }
+  return await productModel
+    .find(query)
+    .sort({ [sort]: -1 })
+    .limit(limit)
+    .skip(skip)
+    .select(getSelectData(select))
+    .exec()
+}
+
+const findProductById = async ({ product_id, unSelect }: { product_id: string; unSelect: string[] }) => {
+  const product = await productModel.findById(product_id).select(getUnSelectData(unSelect)).exec()
+  return product
+}
+
+export {
+  findAllDraftsForShop,
+  publishedProductByShop,
+  findAllPublishedProductsByShop,
+  searchProductsByUser,
+  findAllProducts,
+  findProductById
+}

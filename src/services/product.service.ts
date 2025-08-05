@@ -1,6 +1,8 @@
 import {
   findAllDraftsForShop,
+  findAllProducts,
   findAllPublishedProductsByShop,
+  findProductById,
   publishedProductByShop,
   searchProductsByUser
 } from '~/models/repositories/product.repo'
@@ -74,6 +76,33 @@ class ProductFactory {
 
   static async searchProducts({ searchTerm }: { searchTerm: string }) {
     return await searchProductsByUser({ searchTerm })
+  }
+
+  static async findAllProducts({
+    limit = 50,
+    sort = 'ctime',
+    page = 1,
+    filter = { isPublished: true }
+  }: {
+    limit?: number
+    sort?: string
+    page?: number
+    filter?: any
+  }) {
+    // const skip = (page - 1) * limit
+    // const query = { ...filter }
+    // return await productModel.find(query).sort({ [sort]: -1 }).limit(limit).skip(skip).exec()
+    return await findAllProducts({
+      limit,
+      sort,
+      page,
+      filter,
+      select: ['product_name', 'product_price', 'product_quantity', 'product_type']
+    })
+  }
+
+  static async findProductById({ product_id }: { product_id: string }) {
+    return await findProductById({ product_id, unSelect: ['__v'] })
   }
 }
 
