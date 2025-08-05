@@ -59,15 +59,16 @@ const authentication = asyncHandler(async (req: any, res: Response, next: NextFu
     throw createHttpError(401, 'Invalid request')
   }
   try {
-    const decodedUserId = jwt.verify(accessToken, keyStore.publicKey)
-    if (typeof decodedUserId === 'object' && 'userId' in decodedUserId) {
-      if (decodedUserId.userId !== userId) {
+    const decodedUser = jwt.verify(accessToken, keyStore.publicKey)
+    if (typeof decodedUser === 'object' && 'userId' in decodedUser) {
+      if (decodedUser.userId !== userId) {
         throw createHttpError(401, 'Invalid user ID')
       }
     } else {
       throw createHttpError(401, 'Invalid token payload')
     }
     req.keyStore = keyStore
+    req.user = decodedUser
     return next()
   } catch (error) {
     throw error instanceof jwt.JsonWebTokenError
