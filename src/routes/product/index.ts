@@ -5,8 +5,11 @@ import productController from '~/controllers/product.controller'
 
 const router = express.Router()
 
+router.get('/search/:searchTerm', asyncHandler(productController.getProductsBySearch))
 router.use(authentication)
 router.post('/create', asyncHandler(productController.createProduct))
 router.get('/drafts/all', asyncHandler(productController.getALlDraftsForShop))
+router.put('/published/:product_id', asyncHandler(productController.publishedProductByShop))
+router.get('/published/all', asyncHandler(productController.getAllPublishedProductsByShop))
 
 export default router

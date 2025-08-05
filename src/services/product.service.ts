@@ -1,4 +1,9 @@
-import { findAllDraftsForShop } from '~/models/repositories/product.repo'
+import {
+  findAllDraftsForShop,
+  findAllPublishedProductsByShop,
+  publishedProductByShop,
+  searchProductsByUser
+} from '~/models/repositories/product.repo'
 import { productModel, clothingModel, electronicModel } from '../models/product.model'
 import createHttpError from 'http-errors'
 
@@ -45,6 +50,30 @@ class ProductFactory {
       isDraft: true
     }
     return await findAllDraftsForShop({ query, limit, skip })
+  }
+
+  static async publishedProductByShop({ product_shop, product_id }: { product_shop: string; product_id: string }) {
+    return await publishedProductByShop({ product_shop, product_id })
+  }
+
+  static async findAllPublishedProductsByShop({
+    product_shop,
+    limit = 50,
+    skip = 0
+  }: {
+    product_shop: string
+    limit: number
+    skip: number
+  }) {
+    const query = {
+      product_shop,
+      isPublished: true
+    }
+    return await findAllPublishedProductsByShop({ query, limit, skip })
+  }
+
+  static async searchProducts({ searchTerm }: { searchTerm: string }) {
+    return await searchProductsByUser({ searchTerm })
   }
 }
 
