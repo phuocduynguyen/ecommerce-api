@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+import slugify from 'slugify'
 
 const DOCUMENT_NAME = 'Product'
 const COLLECTION_NAME = 'Products'
@@ -39,6 +40,32 @@ const productSchema = new mongoose.Schema(
     product_attributes: {
       type: Schema.Types.Mixed,
       required: true
+    },
+    // more fields
+
+    product_slug: String,
+    product_ratingAverage: {
+      type: Number,
+      default: 4.5,
+      min: 1,
+      max: 5,
+      set: (v: number) => Math.round(v * 10) / 10 // Round to one decimal place
+    },
+    product_variations: {
+      type: [Schema.Types.Mixed],
+      default: []
+    },
+    isDraft: {
+      type: Boolean,
+      default: true,
+      index: true,
+      select: false
+    },
+    isPublished: {
+      type: Boolean,
+      default: false,
+      index: true,
+      select: false
     }
   },
   {
@@ -46,6 +73,15 @@ const productSchema = new mongoose.Schema(
     collection: COLLECTION_NAME
   }
 )
+
+// Document middleware to create before saving
+
+productSchema.pre('save', function (next) {
+  if (this.isModified('product_name')) {
+    this.product_slug = slugify(this.product_name, { lower: true })
+  }
+  next()
+})
 
 const clothingSchema = new mongoose.Schema(
   {

@@ -7,5 +7,6 @@ const router = express.Router()
 
 router.use(authentication)
 router.post('/create', asyncHandler(productController.createProduct))
+router.get('/drafts/all', asyncHandler(productController.getALlDraftsForShop))
 
 export default router
