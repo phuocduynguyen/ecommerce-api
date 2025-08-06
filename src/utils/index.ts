@@ -20,4 +20,4 @@ const getUnSelectData = (select: string[]) => {
   )
 }
 
-export { getInfoData, getSelectData,getUnSelectData }
+export { getInfoData, getSelectData, getUnSelectData }

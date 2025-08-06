@@ -8,6 +8,7 @@ import {
 } from '~/models/repositories/product.repo'
 import { productModel, clothingModel, electronicModel } from '../models/product.model'
 import createHttpError from 'http-errors'
+import { Types } from 'mongoose'
 
 interface ProductInput {
   product_name: string
@@ -33,6 +34,25 @@ class ProductFactory {
         return new Clothing(payload).createProduct()
       case 'Electronics':
         return new Electronics(payload).createProduct()
+      default:
+        throw createHttpError(400, `Invalid product type: ${type}`)
+    }
+  }
+
+  static async updateProduct({
+    type,
+    product_id,
+    payload
+  }: {
+    type: string
+    product_id: string
+    payload: ProductInput
+  }) {
+    switch (type) {
+      case 'Clothing':
+        return new Clothing(payload).updateProduct(new Types.ObjectId(product_id))
+      case 'Electronics':
+        return new Electronics(payload).updateProduct(new Types.ObjectId(product_id))
       default:
         throw createHttpError(400, `Invalid product type: ${type}`)
     }
@@ -153,8 +173,16 @@ class Product {
   }
 
   // Add common product methods here
-  async createProduct(product_id?: any) {
+  async createProduct(product_id: Types.ObjectId) {
     return await productModel.create({ ...this, _id: product_id })
+  }
+
+  async updateProduct(product_id: Types.ObjectId, payload: ProductInput) {
+    const updatedProduct = await productModel.findByIdAndUpdate(product_id, payload, { new: true, runValidators: true })
+    if (!updatedProduct) {
+      throw createHttpError(404, 'Product not found')
+    }
+    return updatedProduct
   }
 }
 
@@ -164,15 +192,27 @@ class Clothing extends Product {
   // Add specific methods for Clothing if needed
 
   async createProduct() {
-    const newClothing = await clothingModel.create(this.product_attributes)
+    const newClothing = await clothingModel.create({ ...this.product_attributes, product_shop: this.product_shop })
     if (!newClothing) {
       throw createHttpError(400, 'Failed to create clothing product')
     }
-    const newProduct = await super.createProduct()
+    const newProduct = await super.createProduct(newClothing._id)
     if (!newProduct) {
       throw createHttpError(400, 'Failed to create product')
     }
     return newProduct
+  }
+
+  async updateProduct(productId: Types.ObjectId) {
+    const productAttributes = this.product_attributes
+
+    //TODO: Check if productAttributes is valid (undefined,null,etc)
+    const updatedProduct = await super.updateProduct(productId, {
+      ...this,
+      product_attributes: productAttributes
+    })
+
+    return updatedProduct
   }
 }
 
@@ -189,6 +229,18 @@ class Electronics extends Product {
       throw createHttpError(400, 'Failed to create product')
     }
     return newProduct
+  }
+
+  async updateProduct(productId: Types.ObjectId) {
+    const productAttributes = this.product_attributes
+
+    //TODO: Check if productAttributes is valid (undefined,null,etc)
+    const updatedProduct = await super.updateProduct(productId, {
+      ...this,
+      product_attributes: productAttributes
+    })
+
+    return updatedProduct
   }
 }
 

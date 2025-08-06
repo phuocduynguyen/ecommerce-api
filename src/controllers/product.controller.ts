@@ -142,6 +142,30 @@ class ProductController {
       return next(createHttpError(500, 'Internal Server Error'))
     }
   }
+
+  // Patch
+  async updateProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { product_id } = req.params
+      const updatedProduct = await ProductFactory.updateProduct({
+        type: req.body.type,
+        product_id,
+        payload: req.body
+      })
+      if (!updatedProduct) {
+        return next(createHttpError(404, 'Product not found'))
+      }
+      res.status(200).json({
+        message: 'Product updated successfully',
+        data: updatedProduct
+      })
+    } catch (error) {
+      if (error instanceof createHttpError.HttpError) {
+        return next(error)
+      }
+      return next(createHttpError(500, 'Internal Server Error'))
+    }
+  }
 }
 
 const productController = new ProductController()
