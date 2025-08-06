@@ -9,6 +9,7 @@ import {
 import { productModel, clothingModel, electronicModel } from '../models/product.model'
 import createHttpError from 'http-errors'
 import { Types } from 'mongoose'
+import { insertInventory } from '~/models/repositories/inventory.repo'
 
 interface ProductInput {
   product_name: string
@@ -174,7 +175,18 @@ class Product {
 
   // Add common product methods here
   async createProduct(product_id: Types.ObjectId) {
-    return await productModel.create({ ...this, _id: product_id })
+    const newProduct = await productModel.create({ ...this, _id: product_id })
+    if (newProduct) {
+      // add product_stock in inventory collection
+      await insertInventory({
+        payload: {
+          inven_productId: newProduct._id,
+          inven_stock: newProduct.product_quantity,
+          inven_shopId: newProduct.product_shop
+        }
+      })
+    }
+    return newProduct
   }
 
   async updateProduct(product_id: Types.ObjectId, payload: ProductInput) {
