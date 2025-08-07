@@ -76,7 +76,7 @@ const findAllProducts = async ({
   limit: number
   sort: string
   page: number
-  filter?: any
+  filter: object
   select: string[]
 }) => {
   const skip = (page - 1) * limit

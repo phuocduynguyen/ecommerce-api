@@ -1,4 +1,7 @@
 import { pick } from 'lodash'
+import { Types } from 'mongoose'
+
+const convertToObjectId = (id: string) => new Types.ObjectId(id)
 const getInfoData = ({ field = [], object = {} }: { field: string[]; object: object }) => {
   return pick(object, field)
 }
@@ -20,4 +23,4 @@ const getUnSelectData = (select: string[]) => {
   )
 }
 
-export { getInfoData, getSelectData, getUnSelectData }
+export { getInfoData, getSelectData, getUnSelectData, convertToObjectId }
