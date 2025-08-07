@@ -1,4 +1,4 @@
-import { getSelectData, getUnSelectData } from '~/utils'
+import { convertToObjectId, getSelectData, getUnSelectData } from '~/utils'
 import { productModel } from '../product.model'
 
 const queryProducts = async (query: any, limit: number, skip: number) => {
@@ -95,11 +95,17 @@ const findProductById = async ({ product_id, unSelect }: { product_id: string; u
   return product
 }
 
+const getProductById = async ({ product_id }: { product_id: string }) => {
+  const product = await productModel.findById(convertToObjectId(product_id)).lean()
+  return product
+}
+
 export {
   findAllDraftsForShop,
   publishedProductByShop,
   findAllPublishedProductsByShop,
   searchProductsByUser,
   findAllProducts,
-  findProductById
+  findProductById,
+  getProductById
 }
