@@ -100,6 +100,21 @@ const getProductById = async ({ product_id }: { product_id: string }) => {
   return product
 }
 
+const checkProductByServer = async (products: any) => {
+  return await Promise.all(
+    products.map(async (product: any) => {
+      const foundProduct = await getProductById({ product_id: product._id })
+      if (foundProduct) {
+        return {
+          price: foundProduct.product_price,
+          quantity: foundProduct.product_quantity,
+          productId: foundProduct._id
+        }
+      }
+    })
+  )
+}
+
 export {
   findAllDraftsForShop,
   publishedProductByShop,
@@ -107,5 +122,6 @@ export {
   searchProductsByUser,
   findAllProducts,
   findProductById,
-  getProductById
+  getProductById,
+  checkProductByServer
 }
